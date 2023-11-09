@@ -7,6 +7,7 @@ import { ActivityIndicator } from 'react-native';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
 import { AutheticateScreen } from './authenticate';
+import { ScavHuntScreen } from './scavhunt';
 
 const persistor= persistStore(store)
 const Stack = createNativeStackNavigator();
@@ -18,8 +19,8 @@ export default function App() {
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen name="Home" component={SplashScreen} options={{title: 'Splash', headerShown: false}}/>
-
             <Stack.Screen name="Register/Log-In" component={AutheticateScreen} options={{title: 'Register/Log-In'}}/>
+            <Stack.Screen name="Scavenger Hunt" component={ScavHuntScreen} options={{title: 'TurkeyChase'}}/>
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>

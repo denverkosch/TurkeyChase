@@ -4,17 +4,23 @@ import { createSlice } from "@reduxjs/toolkit";
 const loginValidationSlice = createSlice({
     name: 'Validation',
     initialState: {
-      token: ''
+      token: '',
+      userid: ''
     },
     reducers: {
       setToken: (state, token) => {
         state.token = token.payload
       },
-      clearToken: (state) => {
+      clearAll: (state) => {
         state.token = ''
+        state.userid = ''
       },
+      setUserId: (state, userid) => {
+        state.userid = userid.payload
+      }
+      
     }
   });
   
-  export const { setToken, clearToken } = loginValidationSlice.actions
+  export const { setToken, clearAll, setUserId } = loginValidationSlice.actions
   export default loginValidationSlice.reducer
