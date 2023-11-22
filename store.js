@@ -1,11 +1,11 @@
 import { configureStore, } from '@reduxjs/toolkit'
-import cipherHistoryReducer from './slices'
+import userInfoReducer from './slices'
 import { combineReducers } from "redux"
 import {persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER} from 'redux-persist'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const reducers = combineReducers({
-    cipherHistory: cipherHistoryReducer
+    userInfo: userInfoReducer
     })
 
 const persistConfig = {

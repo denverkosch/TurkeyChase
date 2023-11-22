@@ -7,6 +7,60 @@ export const Splash = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         alignContent : 'center',
-        flex: 1,
+        display: 'flex',
       },
+});
+
+export const Auth = StyleSheet.create({
+  container: {
+    display:'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  button: {
+    maxWidth: window.innerWidth/2,
+  },
+  inputfield: {
+    alignContent: 'center',
+    textAlign:'center',
+    borderColor: 'black',
+    borderWidth: 2,
+
+  },
+});
+
+export const ScavHunt = StyleSheet.create({
+  container: {
+    display:'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  huntObj: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+  inputField: {
+    alignContent: 'center',
+    textAlign:'center',
+    borderColor: 'black',
+    borderWidth: 2,
+  },
+});
+
+export const Hunt = StyleSheet.create({
+  container: {
+    display:'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inputField: {
+    alignContent: 'center',
+    textAlign:'center',
+    borderColor: 'black',
+    borderWidth: 2,
+  },
+  HuntName: {
+    fontSize: 20,
+  }
 });
