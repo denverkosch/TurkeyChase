@@ -1,8 +1,8 @@
 import { Button, TextInput, View, Text } from 'react-native';
 import { useState } from 'react';
-import { register, login } from '../registerLogin';
+import { register, login } from '../functions';
 import { useDispatch } from 'react-redux';
-import { setToken, setUserId } from '../slices';
+import { setToken, } from '../slices';
 import { Auth } from '../styles';
 
 
@@ -68,7 +68,6 @@ export function AutheticateScreen({navigation}) {
                         if ('token' in result) {
                             console.log(result.token);
                             dispatch(setToken(result.token));
-                            dispatch(setUserId(username));
                             navigation.replace('Scavenger Hunt');
                         } else {
                             console.log('error: ' + result.error);
@@ -126,7 +125,6 @@ export function AutheticateScreen({navigation}) {
                         //Check for successful return
                         if ('token' in result) {
                             dispatch(setToken(result.token));
-                            dispatch(setUserId(username));
                             navigation.replace('Scavenger Hunt');
                         } else {
                             setErr("Failed to log in");

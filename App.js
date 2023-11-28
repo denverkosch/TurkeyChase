@@ -9,6 +9,9 @@ import { persistStore } from 'redux-persist';
 import { AutheticateScreen } from './AppPages/authenticate';
 import { ScavHuntScreen } from './AppPages/scavhunt';
 import { HuntDetailScreen } from './AppPages/huntDetails';
+import { LocationScreen } from './AppPages/locationDetails';
+import { ConditionsScreen } from './AppPages/ConditionsPage';
+import { MapScreen } from './AppPages/MapScreen';
 
 const persistor= persistStore(store)
 const Stack = createNativeStackNavigator();
@@ -23,6 +26,10 @@ export default function App() {
             <Stack.Screen name="Scavenger Hunt" component={ScavHuntScreen} options={{title: 'TurkeyChase'}}/>
             <Stack.Screen name="Register/Log-In" component={AutheticateScreen} options={{title: 'Register/Log-In'}}/>
             <Stack.Screen name="Hunt Details" component={HuntDetailScreen} options={{title: 'Hunt Details'}}/>
+            <Stack.Screen name="Location" component={LocationScreen} options={{title: 'Location Details'}}/>
+            <Stack.Screen name="Conditions" component={ConditionsScreen} options={{title: 'Conditions'}}/>
+            <Stack.Screen name="LocationMap" component={MapScreen} options={{title: 'Location on Map'}}/>
+            
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>

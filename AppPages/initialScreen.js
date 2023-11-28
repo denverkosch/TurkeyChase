@@ -31,7 +31,6 @@ export function SplashScreen({navigation}) {
           await verifyToken(token)
           .then (data => {
           if ('userid' in data) {
-            setUserId(data.userid);
             navigation.replace('Scavenger Hunt');
           } else {
             console.log(data.error);
@@ -46,7 +45,7 @@ export function SplashScreen({navigation}) {
 
     return (
         <View style={Splash.container}>
-            <Image style ={{width:'100%', height:"40%"}} source={require('../tmp.jpg')}/>
+            <Image style ={{width:'100%'}} source={require('../TurkeyChase.png')}/>
         </View>
     )
 }

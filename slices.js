@@ -5,8 +5,6 @@ const loginValidationSlice = createSlice({
     name: 'Validation',
     initialState: {
       token: '',
-      userid: '',
-      hunts: [],
     },
     reducers: {
       setToken: (state, token) => {
@@ -14,17 +12,9 @@ const loginValidationSlice = createSlice({
       },
       clearAll: (state) => {
         state.token = '';
-        state.userid = '';
-        state.huntList = [];
       },
-      setUserId: (state, userid) => {
-        state.userid = userid.payload;
-      },
-      setHuntList: (state, hunts) => {
-        state.huntList = hunts.payload;
-      }
     }
   });
   
-  export const { setToken, clearAll, setUserId, setHuntList } = loginValidationSlice.actions
+  export const { setToken, clearAll, } = loginValidationSlice.actions
   export default loginValidationSlice.reducer

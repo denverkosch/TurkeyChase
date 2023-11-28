@@ -2,8 +2,11 @@ import { Button, FlatList, Text, TextInput, TouchableWithoutFeedback, View, Keyb
 import { ScavHunt } from '../styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearAll } from '../slices';
-import { apiCall } from '../registerLogin';
-import { useEffect, useState } from 'react';
+import { apiCall } from '../functions';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { FontAwesome } from '@expo/vector-icons';
+import * as Location from 'expo-location';
 
 
 export function ScavHuntScreen({navigation}) {
@@ -11,13 +14,20 @@ export function ScavHuntScreen({navigation}) {
     const dispatch = useDispatch();
     const [huntName, setHuntName] = useState('');
     const [huntList, setHuntList] = useState([]);
+    const [locPerm, setLocPerm] = useState(false);
     
-    useEffect(() => {
+    useFocusEffect(useCallback(() => {
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync()
+            if (status !== 'granted') return;
+            setLocPerm(true);
+        })();
+        
         const getList = async () => {
             const result = await apiCall('getMyHunts.php', {token: token});
             if (result) {
                 if (result.hunts) {
-                setHuntList(result.hunts);
+                    setHuntList(result.hunts);
                 }
                 else {
                     console.log("error: failed to recieve hunts properly (returned: " + result.error);
@@ -25,15 +35,16 @@ export function ScavHuntScreen({navigation}) {
             }
         };
         getList();
-    }, [token]);
+    },[]));
 
     const hunt = (item) => {
-        const {huntid, name} = item.item;
+        const {name, active} = item.item;
         return (
             <View style={ScavHunt.huntObj}>
-                <Text>{name}</Text>
+                <FontAwesome name="circle" size={20} color={(active) ? "green" : "red"} />
+                <Text> {name} </Text>
                 <Button title='Details' onPress={() => {
-                    navigation.replace('Hunt Details', {huntid: huntid, name: name});
+                    navigation.navigate('Hunt Details', {hunt: item.item, locPerm: locPerm});
                 }}/>
             </View>
         )
@@ -57,6 +68,7 @@ export function ScavHuntScreen({navigation}) {
                     <Button title='Add Hunt' onPress={ async () => {
                         if (huntName != '') {
                             await apiCall('addHunt.php', {token: token, name: huntName});
+                            setHuntName('');
                             setHuntList((await apiCall('getMyHunts.php', {token: token})).hunts);
                         }
                         else {
@@ -72,7 +84,7 @@ export function ScavHuntScreen({navigation}) {
 
                 <FlatList
                     data= {huntList}
-                    renderItem={ (item) => hunt(item, dispatch)}
+                    renderItem={ (item) => hunt(item)}
                     keyExtractor={ (item, index) => index }
                     style={{borderColor: 'black', borderWidth: 2, width: 'auto'}}
                 />
