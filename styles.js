@@ -47,6 +47,28 @@ export const ScavHunt = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 2,
   },
+  footer: {
+    width: '100%',
+    display:'flex',
+    alignItems: 'stretch',
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: 20,
+  },
+  header: {
+    width: '100%',
+    display:'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 20,
+    position: 'absolute',
+    top:0,
+  },
+  main:{
+    display:'flex',
+    alignItems: 'stretch',
+    justifyContent: 'center',
+  },
 });
 
 export const Hunt = StyleSheet.create({
@@ -84,12 +106,11 @@ export const Hunt = StyleSheet.create({
   },
   footer: {
     width: '100%',
-    paddingTop:'10%',
     display:'flex',
     alignItems: 'stretch',
     justifyContent: 'center',
     position: 'absolute',
-    bottom:20,
+    bottom: 20,
   },
   location: {
     flexDirection: 'row',

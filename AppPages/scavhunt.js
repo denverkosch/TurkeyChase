@@ -54,17 +54,20 @@ export function ScavHuntScreen({navigation}) {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={ScavHunt.container}>
+                <View style={ScavHunt.header}>
 
-                <Text style={{fontWeight: 'bold'}}>Add Scavenger Hunt:</Text>
-                <TextInput
-                placeholder='Hunt Name'
-                inputMode='text'
-                value={huntName}
-                style={ScavHunt.inputField}
-                onChangeText={text => setHuntName(text)}
-                />
+                </View>
 
-                <View style={{padding: 10}}>
+                <View style={ScavHunt.main}>
+                    <Text style={{fontWeight: 'bold'}}>Add Scavenger Hunt:</Text>
+                    <TextInput
+                    placeholder='Hunt Name'
+                    inputMode='text'
+                    value={huntName}
+                    style={ScavHunt.inputField}
+                    onChangeText={text => setHuntName(text)}
+                    />
+
                     <Button title='Add Hunt' onPress={ async () => {
                         if (huntName != '') {
                             await apiCall('addHunt.php', {token: token, name: huntName});
@@ -77,9 +80,6 @@ export function ScavHuntScreen({navigation}) {
                     }}/>
                 </View>
 
-
-                <View style={{padding: 10}}></View>
-
                 <Text style={{fontWeight: 'bold'}}>Scavenger Hunts You Own:</Text>
 
                 <FlatList
@@ -89,8 +89,8 @@ export function ScavHuntScreen({navigation}) {
                     style={{borderColor: 'black', borderWidth: 2, width: 'auto'}}
                 />
 
-                <View style={{padding: 20}}></View>
-
+                <View style={ScavHunt.footer}>
+            
                 <Button title="Log Out" onPress={() =>{
                     dispatch(clearAll());
                     navigation.reset({
@@ -98,6 +98,7 @@ export function ScavHuntScreen({navigation}) {
                     routes: [{ name: 'Register/Log-In' }],
                     })
                 }}/>
+                </View>
             </View>
         </TouchableWithoutFeedback>
     )
