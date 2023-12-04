@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 
 
 export const Splash = StyleSheet.create({
@@ -32,6 +32,7 @@ export const Auth = StyleSheet.create({
 
 export const ScavHunt = StyleSheet.create({
   container: {
+    flex:1,
     display:'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -46,6 +47,7 @@ export const ScavHunt = StyleSheet.create({
     textAlign:'center',
     borderColor: 'black',
     borderWidth: 2,
+    height:40,
   },
   footer: {
     width: '100%',
@@ -69,6 +71,18 @@ export const ScavHunt = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'center',
   },
+  welcome: {
+    paddingTop: 10,
+    fontSize: 26,
+    textDecorationLine: 'underline',
+  },
+  modalContainer: {
+    // width: '105%',
+    display:'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
 });
 
 export const Hunt = StyleSheet.create({
@@ -79,7 +93,7 @@ export const Hunt = StyleSheet.create({
     flex: 1,
   },
   inputField: {
-    alignContent: 'center',
+    alignSelf: 'center',
     textAlign:'center',
     borderColor: 'black',
     borderWidth: 2,
@@ -88,7 +102,6 @@ export const Hunt = StyleSheet.create({
   HuntName: {
     fontSize: 26,
     textDecorationLine: 'underline',
-    paddingTop:0,
   },
   header: {
     width: '100%',
@@ -202,6 +215,12 @@ export const Con = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
   },
+  modal: {
+    display:'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
 });
 
 export const Map = StyleSheet.create({
@@ -232,5 +251,53 @@ export const Map = StyleSheet.create({
     justifyContent: 'center',
     position: 'absolute',
     bottom: 20,
+  },
+});
+
+export const UH = StyleSheet.create({
+  container: {
+    display:'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  header: {
+    width: '100%',
+    display:'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position:'absolute',
+    top:0
+  },
+  main: {
+    display:'flex',
+    alignItems: 'stretch',
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  footer: {
+    width: '100%',
+    display:'flex',
+    alignItems: 'stretch',
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: 20,
+  },
+  HuntName: {
+    fontSize: 26,
+    textDecorationLine: 'underline',
+    maxWidth: Dimensions.get('window').width,
+    textAlign: 'center',
+  },
+  modal: {
+    display:'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  congrats: {
+    backgroundColor:'pink', 
+    width: Dimensions.get("screen").width, 
+    height: Dimensions.get("screen").height
   },
 });

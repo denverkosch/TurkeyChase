@@ -31,7 +31,18 @@ export function HuntDetailScreen({route, navigation}) {
             }
         };
         getLocations();
-    },[locations]));
+    },[]));
+
+    const refreshLoc = async () => {
+        const result = await apiCall('getHuntLocations.php', { token: token, huntid: huntid });
+        if (result) {
+          if (result.locations) {
+            setLocations(result.locations);
+          } else {
+            console.log("error: failed to receive conditions properly (returned: " + result.error);
+          }
+        }
+      };
 
     const location = ({item}) => {
         const {name} = item;
@@ -56,7 +67,7 @@ export function HuntDetailScreen({route, navigation}) {
                         <Text style ={{fontWeight: 'bold'}} onPress={() => setNameChange(true)}>Change Hunt Name</Text>
                     }
                     {nameChange &&
-                        <View style={{padding: 20, borderColor: 'black', borderWidth: 1,}}>
+                        <View style={{padding: 20, borderColor: 'black', borderWidth: 1, alignSelf: 'center'}}>
                             <Text style={{fontWeight: 'bold'}}>Change Hunt Name:</Text>
                             <TextInput
                             placeholder='New Hunt Name'
@@ -114,7 +125,7 @@ export function HuntDetailScreen({route, navigation}) {
                                 if (locationName != '') {
                                     await apiCall('addHuntLocation.php', {token: token, name: locationName, huntid: huntid});
                                     setLocationName('');
-                                    setLocations( await apiCall('getHuntLocations.php', {token: token, huntid: huntid}).locations);
+                                    refreshLoc();
                                 }
                                 else {
                                     alert('Please enter a name for the location.');

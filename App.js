@@ -12,6 +12,10 @@ import { HuntDetailScreen } from './AppPages/huntDetails';
 import { LocationScreen } from './AppPages/locationDetails';
 import { ConditionsScreen } from './AppPages/ConditionsPage';
 import { MapScreen } from './AppPages/MapScreen';
+import { StartHuntScreen } from './AppPages/player/startHuntTbd';
+import { ActiveHuntScreen } from './AppPages/player/activeHunt';
+import { HuntLocationScreen } from './AppPages/player/huntLoc';
+
 
 const persistor= persistStore(store)
 const Stack = createNativeStackNavigator();
@@ -29,6 +33,9 @@ export default function App() {
             <Stack.Screen name="Location" component={LocationScreen} options={{title: 'Location Details'}}/>
             <Stack.Screen name="Conditions" component={ConditionsScreen} options={{title: 'Conditions'}}/>
             <Stack.Screen name="LocationMap" component={MapScreen} options={{title: 'Location on Map'}}/>
+            <Stack.Screen name='StartHunt' component={StartHuntScreen} options={{title: 'Hunt Details'}}/>
+            <Stack.Screen name="ActiveHunt" component={ActiveHuntScreen} option={{title: 'Hunt Details'}}/>
+            <Stack.Screen name="AHLocation" component={HuntLocationScreen} option={{title: 'Location'}}/>
             
           </Stack.Navigator>
         </NavigationContainer>

@@ -112,6 +112,7 @@ export function AutheticateScreen({navigation}) {
                 style={Auth.inputfield}
                 placeholder='Enter Password'
                 inputMode='text'
+                secureTextEntry={true}
                 value={password}
                 onChangeText={text => setPassword(text)}
                 />

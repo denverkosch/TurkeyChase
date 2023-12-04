@@ -19,7 +19,6 @@ export function LocationScreen({ route, navigation }) {
     const [long, setLong] = useState(route.params.loc.longitude);
     const [locPerm, setLocPerm] = useState(route.params.locPerm);
     const [delLoc, setDelLoc] = useState(false);
-    const [err, setErr] = useState('');
     const [editing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
     const [newClue, setNewClue] = useState('');
@@ -32,8 +31,7 @@ export function LocationScreen({ route, navigation }) {
     const [chosenStart, setChosenStart] = useState(new Date());
     const [chosenEnd, setChosenEnd] = useState(new Date());
 
-    
-    useEffect(() => {
+    useFocusEffect(useCallback(() => {
         const requestLocationAccess = async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') return;
@@ -42,9 +40,6 @@ export function LocationScreen({ route, navigation }) {
         if (!locPerm) requestLocationAccess();
 
 
-    }, []);
-
-    useFocusEffect(useCallback(() => {
         const getConditions = async () => {
             const result = await apiCall('getConditions.php', {token: token, locationid: locationid});
             if (result) {
@@ -59,16 +54,44 @@ export function LocationScreen({ route, navigation }) {
         getConditions();
     }, []));
 
+    const refreshCon = async () => {
+        const result = await apiCall('getConditions.php', { token: token, locationid: locationid });
+        if (result) {
+          if (result.conditions) {
+            setConditions(result.conditions);
+          } else {
+            console.log("error: failed to receive conditions properly (returned: " + result.error);
+          }
+        }
+    };
+    
+    const isRequiredLoc = async () => {
+        const results = await Promise.all(
+            locList.map(async element => {
+                let result = await apiCall('getConditions.php', {token: token, locationid: element.locationid});
+                if (result && result.conditions) {
+                    let locCons = result.conditions;
+                    if (locCons.length != 0) {
+                        let locConList = locCons.map(obj => obj.requiredlocationid);
+                        return locConList.includes(locationid);
+                    }
+                }
+                else console.log("error: failed to recieve conditions properly (returned: " + result.error);
+            })
+            )
+        return results.some(result => result);
+    };
+
     const getLoc = async () => {
         let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
-        return ({latitude: location.coords.latitude, longitude: location.coords.longitude});
+        return ({latitude: location.coords.latitude.toFixed(6), longitude: location.coords.longitude.toFixed(6)});
     };
 
     const handleUpdateLoc = async () => {
         let loc = await getLoc();
         setLat(loc.latitude);
         setLong(loc.longitude);
-        console.log(await apiCall('updateHuntLocationPosition.php', {token: token, locationid: locationid, latitude: loc.latitude, longitude: loc.longitude}));
+        await apiCall('updateHuntLocationPosition.php', {token: token, locationid: locationid, latitude: loc.latitude, longitude: loc.longitude});
     };
 
     const toggleAddingTime = () => setAddingTime(!addingTime);
@@ -117,12 +140,11 @@ export function LocationScreen({ route, navigation }) {
                                     i.description = (newDesc == '') ? desc : newDesc;
                                     i.token = token;
                                     i.locationid = locationid;
-                                } else setErr("Please enter new Values");
-                                console.log("Sending to server: ", i);
+                                } else alert("Please enter new Values");
                                 
                                 let result = await apiCall('updateHuntLocation.php', i);
                                 if (result.status != 'okay') {
-                                    setErr(result.error);
+                                    alert(result.error);
                                     return;
                                 }
                                 setClue(newClue);
@@ -192,11 +214,10 @@ export function LocationScreen({ route, navigation }) {
                                                 <Button title='Cancel' onPress={() => setAddingCon(false)}/>
                                                 <Button title='Add Condition' onPress={async () => {
                                                     if (chosenLoc != '') {
-                                                        console.log({locationid: locationid, token:token, requiredlocationid: chosenLoc});
                                                         await apiCall('addCondition.php', {locationid: locationid, token:token, requiredlocationid: chosenLoc});
-                                                        setConditions(await apiCall('getConditions.php', {token: token, locationid: locationid}));
                                                     }
                                                     setAddingCon(false);
+                                                    refreshCon();
                                                 }}/>
                                             </View>
                                         </View>
@@ -216,12 +237,13 @@ export function LocationScreen({ route, navigation }) {
                                             <View style={{flexDirection:'row', alignSelf:'center', }}>
                                                 <Button title='Cancel' onPress={() => setAddingCon(false)}/>
                                                 <Button title='Add Condition' onPress={async () => {
-                                                    let start = chosenStart.getHours() + ':' + chosenStart.getMinutes() + ':00';
-                                                    let end = chosenEnd.getHours() + ':' + chosenEnd.getMinutes() + ':00';
-                                                    console.log('starttime: ', start, 'endtime: ', end);
-                                                    await apiCall('addCondition.php', {locationid: locationid, token:token, starttime: start, endtime: end});
-                                                    setAddingCon(false);
-                                                    setConditions(await apiCall('getConditions.php', {token: token, locationid: locationid}));
+                                                    if (chosenStart > chosenEnd) {
+                                                        let start = chosenStart.getHours() + ':' + chosenStart.getMinutes() + ':00';
+                                                        let end = chosenEnd.getHours() + ':' + chosenEnd.getMinutes() + ':00';
+                                                        await apiCall('addCondition.php', {locationid: locationid, token:token, starttime: start, endtime: end});
+                                                        setAddingCon(false);
+                                                        refreshCon();
+                                                    }
                                                 }}/>
                                             </View>
                                         </View>
@@ -235,7 +257,6 @@ export function LocationScreen({ route, navigation }) {
                 </View>
 
                 <View style={Loc.footer}>
-                    <Text style={{color: 'red'}}>{err}</Text>
                     {!delLoc &&
                         <View>
                             <Button title='Delete Location' onPress={() =>{
@@ -246,15 +267,20 @@ export function LocationScreen({ route, navigation }) {
                     {delLoc &&
                         <View style={Loc.container}>
                             <Text style={{fontWeight: 'bold'}}>Are you sure you want to delete this location?</Text>
-                            <Text style={{fontWeight: 'bold', color: 'red', textAlign: 'center'}}>WARNING: Ensure that any locations dependent on this one are untethered</Text>
+                            <Text style={{fontWeight: 'bold', color: 'red', textAlign: 'center'}}>WARNING: Ensure that there are no conditions which require this Location</Text>
 
                             <Button title='Yes' onPress={async () => {
+                                if (await isRequiredLoc()) {
+                                    alert('Location Required for a Condition (Cannot Delete)');
+                                    setDelLoc(false);
+                                    return;
+                                }
                                 const result = await apiCall('deleteHuntLocation.php', {locationid: locationid, token: token});
                                 if (result.status == "okay") {
                                     navigation.goBack();
                                 }
                                 else {
-                                    setErr(result.error);
+                                    alert(result.error);
                                     setDelLoc(false);
                                 }
                             }}/>

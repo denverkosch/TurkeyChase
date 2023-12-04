@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { View, Text, Button, Modal, Switch } from "react-native";
+import { View, Text, Button, Modal, Switch, Dimensions } from "react-native";
 import { Con } from "../styles";
 import { apiCall } from "../functions";
 import { useSelector } from "react-redux";
 import {Picker} from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 
 export function ConditionsScreen({route, navigation}) {
@@ -17,7 +18,7 @@ export function ConditionsScreen({route, navigation}) {
     const dependentlocationid = route.params.con.dependentlocation;
     const depLoc = locList.find(obj => obj.locationid === dependentlocationid).name;
     const [rlName, setrlName] = useState((rlId !== 'NaN') ? locList.find(obj => obj.locationid === rlId).name : 'NaN');
-    const [delLoc, setDelLoc] = useState(false);
+    const [delCon, setDelCon] = useState(false);
     const [err, setErr] = useState('');
     const [updating, setUpdating] = useState(false);
     const [addingTime, setAddingTime] = useState(false);
@@ -25,7 +26,6 @@ export function ConditionsScreen({route, navigation}) {
     const [chosenStart, setChosenStart] = useState(new Date());
     const [chosenEnd, setChosenEnd] = useState(new Date());
 
-    console.log(route.params.con);
 
     const toggleAddingTime = () => setAddingTime(!addingTime);
     
@@ -55,8 +55,8 @@ export function ConditionsScreen({route, navigation}) {
                 <Button title="Update Conditions" onPress={() => {setUpdating(true)}}/>
 
                 <Modal visible={updating}>
-                    <View style={[{width: '105%'}, Con.container]}>
-                        <View style={{borderColor: 'black', borderWidth: 2, }}>
+                    <View style={Con.modal}>
+                        <View style={{borderColor: 'black', borderWidth: 2, width: Dimensions.get('window').width * .6}}>
                             <Text style={{textAlign:"center", padding: 10}}>New Condition: </Text>
                             <View>
                                 <Text style={{alignSelf: 'center'}}>{'\<--Location   Time--\>'}</Text>
@@ -78,7 +78,6 @@ export function ConditionsScreen({route, navigation}) {
                                         <Button title='Cancel' onPress={() => setUpdating(false)}/>
                                         <Button title='Update' onPress={async () => {
                                             if (chosenLoc != '') {
-                                                console.log({conditionid: conditionid, token:token, requiredlocationid: chosenLoc, starttime:null, endtime:null});
                                                 await apiCall('updateCondition.php', {conditionid: conditionid, token:token, requiredlocationid: chosenLoc, starttime:null, endtime:null});
                                             }
                                             setUpdating(false);
@@ -105,15 +104,16 @@ export function ConditionsScreen({route, navigation}) {
                                     <View style={{flexDirection:'row', alignSelf:'center', }}>
                                         <Button title='Cancel' onPress={() => setUpdating(false)}/>
                                         <Button title='Add Condition' onPress={async () => {
-                                            let start = chosenStart.getHours() + ':' + chosenStart.getMinutes() + ':00';
-                                            let end = chosenEnd.getHours() + ':' + chosenEnd.getMinutes() + ':00';
-                                            console.log('starttime: ', start, 'endtime: ', end);
-                                            await apiCall('updateCondition.php', {conditionid: conditionid, token:token, starttime: start, endtime: end, requiredlocationid: null});
-                                            setUpdating(false);
-                                            setrlId("NaN");
-                                            setrlName("NaN");
-                                            setStarttime(start);
-                                            setEndtime(end);
+                                            if (chosenStart > chosenEnd) {
+                                                let start = chosenStart.getHours() + ':' + chosenStart.getMinutes() + ':00';
+                                                let end = chosenEnd.getHours() + ':' + chosenEnd.getMinutes() + ':00';
+                                                await apiCall('updateCondition.php', {conditionid: conditionid, token:token, starttime: start, endtime: end, requiredlocationid: null});
+                                                setUpdating(false);
+                                                setrlId("NaN");
+                                                setrlName("NaN");
+                                                setStarttime(start);
+                                                setEndtime(end);
+                                            }
                                         }}/>
                                     </View>
                                 </View>
@@ -125,14 +125,14 @@ export function ConditionsScreen({route, navigation}) {
 
             <View style={Con.footer}>
                 <Text style={{color: 'red'}}>{err}</Text>
-                {!delLoc &&
+                {!delCon &&
                     <View>
                         <Button title='Delete Condition' onPress={() =>{
-                            setDelLoc(true);
+                            setDelCon(true);
                         }}/>
                     </View>
                 }
-                {delLoc &&
+                {delCon &&
                     <View >
                         <Text style={{fontWeight: 'bold'}}>Are you sure you want to delete this condition?</Text>
 
@@ -143,12 +143,12 @@ export function ConditionsScreen({route, navigation}) {
                             }
                             else {
                                 setErr(result.error);
-                                setDelLoc(false);
+                                setDelCon(false);
                             }
                         }}/>
 
                         <Button title='No' onPress={() => {
-                            setDelLoc(false);
+                            setDelCon(false);
                         }}/>
 
                     </View>
